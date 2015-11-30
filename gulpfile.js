@@ -1,5 +1,7 @@
 'use strict';
 
+require('es6-promise').polyfill();
+
 // modules
 var assemble = require('fabricator-assemble');
 var browserSync = require('browser-sync');
@@ -13,7 +15,7 @@ var prefix = require('gulp-autoprefixer');
 var rename = require('gulp-rename');
 var reload = browserSync.reload;
 var runSequence = require('run-sequence');
-var sass = require('gulp-sass');
+var sass = require('gulp-compass');
 var sourcemaps = require('gulp-sourcemaps');
 var webpack = require('webpack');
 
@@ -52,7 +54,10 @@ gulp.task('clean', function () {
 gulp.task('styles:fabricator', function () {
 	gulp.src(config.src.styles.fabricator)
 		.pipe(sourcemaps.init())
-		.pipe(sass().on('error', sass.logError))
+		.pipe(sass({
+			sass: 'src/assets/fabricator/styles',
+			css: config.dest + '/assets/fabricator/styles'
+		}))
 		.pipe(prefix('last 1 version'))
 		.pipe(gulpif(!config.dev, csso()))
 		.pipe(rename('f.css'))
@@ -64,7 +69,10 @@ gulp.task('styles:fabricator', function () {
 gulp.task('styles:toolkit', function () {
 	gulp.src(config.src.styles.toolkit)
 		.pipe(gulpif(config.dev, sourcemaps.init()))
-		.pipe(sass().on('error', sass.logError))
+		.pipe(sass({
+			sass: 'src/assets/toolkit/styles',
+			css: config.dest + '/assets/toolkit/styles'
+		}))
 		.pipe(prefix('last 1 version'))
 		.pipe(gulpif(!config.dev, csso()))
 		.pipe(gulpif(config.dev, sourcemaps.write()))
